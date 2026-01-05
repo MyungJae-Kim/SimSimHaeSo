@@ -1,0 +1,99 @@
+백업 절차
+  1. 백업 원본 선택
+    -> 입력: 백업할 원본 파일
+  2. 백업 목적지 선정
+    -> 입력: 로컬 목적지 선정
+  3. tar 명령어로 파이프 전달
+    -> 기본 옵션: -ov, 기본 확장자: gz
+    -> 또는 옵션 입력
+  4. 원격 전송
+    -> scp 또는 ftp: 원격 전송지 사용자, 주소
+
+추가 사항
+  1. 오류 제어
+  * 2. 암호 입력 자동화 또는 암호화
+  3. 메뉴화
+  4. 파일 복원
+  5. 크론탭 등록
+  6. 시간 기록 로깅
+
+======================================================
+메뉴 입력
+  read -p "메뉴를 선택하세요 : " MENU
+
+메뉴
+echo "1) : 백업"
+echo "2) : 복원"
+echo "3) : 크론탭"
+
+case "$MENU" in # 백업
+	BACKUP_SRC=""
+	BACKUP_DST=""
+	TIMESTAMP=".$(date +%Y%m%d%H%M%S)"
+	DEF_OPT="-czf"
+	OPT=""
+	FILENAME=""
+	EXTENSION=""
+	FILE_LOC=""
+
+	1) # 백업
+		read -p "백업 메뉴를 선택하세요 : " MENU_1
+		echo "1) : 전체 백업"
+		echo "2) : 증분 백업"
+		echo "3) : 차등 백업"
+
+				read -p 
+
+		case "$MENU_1" in
+			if [ -z $FILENAME="" ]; then
+				read -p "파일 이름을 입력해주세요." FILENAME
+			else
+				
+			endif
+			if [ -z $OPT="" ]; then
+				read -p "옵션을 입력해주세요." OPT
+			endif
+			if [ -z $FILE_LOC="" ]; then
+				read -p "현재 위치한 디렉터리를 기준으로 진행합니까?(y/n)" FILE_LOC_CHOICE
+					case "$FILE_LOC_CHOICE" in
+						y)
+							$FILE_LOC="./"
+						n)
+							read -p "경로를 입력해주세요." FILE_LOC
+						*)
+							echo "잘못 입력하셨습니다."
+							;;
+					esac
+			endif
+			if [ -z $BACKUP_SRC="" ]; then
+				echo "원본 파일의 경로를 입력해주세요."
+			endif
+			if [ -z $BACKUP_DST="" ]; then
+				echo "원본 파일의 경로를 입력해주세요."
+			endif
+
+			1) # 전체 백업 - FULL
+				tar $DEF_OPT $FILENAME.$EXTENSION $FILENAME -g .$TIMESTAMP_F
+				;;
+
+			2) # 증분 백업 - INCREMENTAL
+				tar $DEF_OPT $FILENAME.$EXTENSION $FILENAME -g .$TIMESTAMP_I
+				;;
+			3) # 차등 백업 - DIFFERENTIAL
+				tar $DEF_OPT $FILENAME.$EXTENSION $FILENAME -g .$TIMESTAMP_D
+				;;
+
+	2) # 복원
+	read -p "복원 메뉴를 선택하세요 : " MENU_2
+		;;
+
+	3) # 크론탭
+	read -p "크론탭 메뉴를 선택하세요 : " MENU_3
+		echo "1) : 크론탭 등록"
+		echo "2) : 크론탭 삭제"
+		echo "3) : 크론탭 조회"
+		;;
+	*) # 입력 오류
+		echo "잘못 입력하셨습니다."
+		;;
+esac
